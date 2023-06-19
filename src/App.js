@@ -1,54 +1,62 @@
 
-import React, { useReducer } from 'react';
-import Content from './components/content/Content';
-import Header from './components/header/Header';
+import React, { useReducer, useState } from 'react';
+import ListTasks from './components/listTasks/ListTasks';
+import TaskInput from './components/taskInput/TaskInput';
 
 function App() {
-  const initState = JSON.parse(localStorage.getItem("listTodos")) || [];
+  const initState = JSON.parse(localStorage.getItem("listTasks")) || [];
 
-  function reducerTodo(state, action) {
+  const [isEdit, setIsEdit] = useState(null);
+
+  const handleEditTask = (id) => {
+    const taskToEdit = initState.find((task) => task.taskId === id);
+    setIsEdit(taskToEdit);
+  };
+
+  function reducerTask(state, action) {
     switch (action.type) {
-      case "addTodo":
-        localStorage.setItem("listTodos", JSON.stringify([...state, action.newTodo]));
-        return [...state, action.newTodo];
+      case "addTask":
+        localStorage.setItem("listTasks", JSON.stringify([...state, action.newTask]));
+        return [...state, action.newTask];
 
-      case "deleteTodo":
+      case "deleteTask":
         const updatedState = state.filter(
-          (todo) => todo.todoId !== action.todoId
+          (task) => task.taskId !== action.taskId
         );
-        localStorage.setItem("listTodos", JSON.stringify(updatedState));
+        localStorage.setItem("listTasks", JSON.stringify(updatedState));
         return updatedState;
 
-      case "updateTodo":
-        const updatedTodos = state.map((todo) => {
-          if (todo.todoId === action.todoUpdate.todoId) {
-            return action.todoUpdate;
+      case "updateTask":
+        const updatedTasks = state.map((task) => {
+          if (task.taskId === action.taskUpdate.taskId) {
+            return action.taskUpdate;
           }
-          return todo;
+          return task;
         })
-        localStorage.setItem("listTodos", JSON.stringify(updatedTodos));
-        return updatedTodos;
+        localStorage.setItem("listTasks", JSON.stringify(updatedTasks));
+        return updatedTasks;
 
-      case "completeTodo":
-        const completedTodos = state.map((todo) => {
-          if (todo.todoId === action.todoId) {
-            return { ...todo, complete: !todo.complete }
+      case "completeTask":
+        const completedTasks = state.map((task) => {
+          if (task.taskId === action.taskId) {
+            return { ...task, complete: !task.complete }
           } else {
-            return todo;
+            return task;
           }
         })
-        localStorage.setItem("listTodos", JSON.stringify(completedTodos));
-        return completedTodos;
+        localStorage.setItem("listTasks", JSON.stringify(completedTasks));
+        return completedTasks;
+
       default:
         throw new Error();
     }
   }
 
-  const [state, dispatch] = useReducer(reducerTodo, initState);
+  const [state, dispatch] = useReducer(reducerTask, initState);
   return (
     <div>
-      <Header handleAddTodo={dispatch} />
-      <Content listTodo={state} handleDeleteTodo={dispatch} handleUpdateTodo={dispatch} handleCompleteTodo={dispatch} />
+      <TaskInput handleAddTask={dispatch} listTasks={state} isEdit={isEdit} handleUpdateTask={dispatch} />
+      <ListTasks listTasks={state} handleDeleteTask={dispatch} handleCompleteTask={dispatch} handleEditTask={handleEditTask} />
     </div>
   );
 }

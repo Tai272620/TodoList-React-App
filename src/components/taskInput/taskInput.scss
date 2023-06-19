@@ -1,0 +1,28 @@
+$whiteColor :#fff;
+
+.form-group {
+    display: flex;
+    align-items: center;
+    background-color: #1c65ca;
+    height: 100px;
+
+    .label {
+        color: $whiteColor;
+        margin: 0 20px;
+    }
+
+    .input {
+        width: 40%;
+        height: 50px;
+        background-color: #5990d6;
+        border: none;
+        color: $whiteColor;
+    }
+
+    .addButton {
+        background-color: #1c65ca;
+        border: none;
+        margin-left: 10px;
+        font-size: 20px;
+    }
+}
